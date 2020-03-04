@@ -1,6 +1,6 @@
 from config import Config
 from pygame.threads import Thread
-import math
+import math,random
 
 class PhysicsController(object):
     def __init__(self, numProc, ballsList):
@@ -9,6 +9,8 @@ class PhysicsController(object):
         self.ballsList = ballsList
         self.degreeX = 0
         self.degreeY = 0
+        self.switch = False
+        self.counter = 0
         if len(self.ballsList) % self.numProc != 0:
             self.groupSize = (len(self.ballsList) // self.numProc) + 1
         else:
@@ -79,6 +81,15 @@ class PhysicsController(object):
                 self.ballsList[i].x += self.ballsList[i].speedX / 100
                 self.ballsList[i].y += self.ballsList[i].speedY / 100
 
+    def autoControl(self):
+        if self.switch:
+            if self.counter == 0:
+                degree = random.randint(-90,90)
+                self.counter = random.randint(0,100)
+                if random.randint(0, 1) == 0:
+                    self.degreeX = degree
+                else: self.degreeY = degree
+            else: self.counter-=1
 
     def drawBalls(self, gameDisplay):
         for ball in self.ballsList: ball.drawBall(gameDisplay)

@@ -29,11 +29,13 @@ if __name__ == '__main__':
     gameDisplay = pygame.Surface((Config.Win.AREA_WIDTH, Config.Win.AREA_HEIGHT))
     pc = PhysicsController(4, createBalls(Config.Physics.NUMBER_BALLS))
     run = True
+    pc.switch = True
     while run:
         pc.drawBalls(gameDisplay)
         pc.createThreads()
         start = time.clock()
         pc.startThreads()
+        pc.autoControl()
        # print(start - time.clock())
         for e in pygame.event.get():
             if e.type == pygame.QUIT:
