@@ -27,7 +27,24 @@ if __name__ == '__main__':
     window = pygame.display.set_mode((Config.Win.WIN_WIDTH, Config.Win.WIN_HEIGHT))
     pygame.display.set_caption(Config.Win.WIN_TITLE)
     gameDisplay = pygame.Surface((Config.Win.AREA_WIDTH, Config.Win.AREA_HEIGHT))
-    pc = PhysicsController(4, createBalls(Config.Physics.NUMBER_BALLS))
+    ball1 = Ball()
+    ball1.setRandomParameters()
+    ball1.x = 200
+    ball1.y = 100
+    ball1.speedX = 0
+    ball1.speedY = 100
+    ball1.radius = 20
+    ball1.mass = 10
+
+    ball2 = Ball()
+    ball2.setRandomParameters()
+    ball2.x = 200
+    ball2.y = 250
+    ball2.speedX = 0
+    ball2.speedY = -10
+    ball2.radius = 20
+    ball2.mass = 10
+    pc = PhysicsController(4, [ball1,ball2])
     run = True
     pc.switch = True
     while run:
@@ -35,7 +52,7 @@ if __name__ == '__main__':
         pc.createThreads()
         start = time.clock()
         pc.startThreads()
-        pc.autoControl()
+        #pc.autoControl()
        # print(start - time.clock())
         for e in pygame.event.get():
             if e.type == pygame.QUIT:

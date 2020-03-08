@@ -11,12 +11,12 @@ class Config(object):
         AREA_ALPHA = 0
 
     class Physics(object):
-        NUMBER_BALLS = 50
+        NUMBER_BALLS = 10
         MIN_MASS = 1
         MAX_MASS = 10
         MIN_RADIUS = 5
         MAX_RADIUS = 20
         GRAVITY = 9.8
-        FRICTION = 0.2
-        COLLISION_ENERGY_LOSS = 0.2
+        FRICTION = 0.0
+        COLLISION_ENERGY_LOSS = 0.0
         COLLISION = False
