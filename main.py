@@ -23,34 +23,16 @@ def createBalls(number):
 if __name__ == '__main__':
     pygame.init()
     clock = pygame.time.Clock()
-    FPS = 60
     window = pygame.display.set_mode((Config.Win.WIN_WIDTH, Config.Win.WIN_HEIGHT))
     pygame.display.set_caption(Config.Win.WIN_TITLE)
     gameDisplay = pygame.Surface((Config.Win.AREA_WIDTH, Config.Win.AREA_HEIGHT))
-    ball1 = Ball()
-    ball1.setRandomParameters()
-    ball1.x = 200
-    ball1.y = 100
-    ball1.speedX = 0
-    ball1.speedY = 100
-    ball1.radius = 20
-    ball1.mass = 10
-
-    ball2 = Ball()
-    ball2.setRandomParameters()
-    ball2.x = 200
-    ball2.y = 250
-    ball2.speedX = 0
-    ball2.speedY = -10
-    ball2.radius = 20
-    ball2.mass = 10
-    pc = PhysicsController(4, [ball1,ball2])
+    pc = PhysicsController(1,  createBalls(20))
     run = True
     pc.switch = True
     while run:
+        start = time.perf_counter()
         pc.drawBalls(gameDisplay)
         pc.createThreads()
-        start = time.clock()
         pc.startThreads()
         #pc.autoControl()
        # print(start - time.clock())
@@ -73,4 +55,6 @@ if __name__ == '__main__':
         window.blit(gameDisplay, (Config.Win.AREA_X, Config.Win.AREA_Y))
         pygame.display.update()
         gameDisplay.fill(Config.Win.AREA_COLOR)
-        clock.tick(FPS)
+        finish = time.perf_counter() - start
+        print(int(1/finish))
+        #clock.tick(FPS)

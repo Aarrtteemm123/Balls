@@ -12,6 +12,7 @@ class PhysicsController(object):
         self.degreeY = 0
         self.switch = False
         self.counter = 0
+        self.flRun = True
         if len(self.ballsList) % self.numThreads != 0:
             self.groupSize = (len(self.ballsList) // self.numThreads) + 1
         else:
@@ -22,6 +23,7 @@ class PhysicsController(object):
         self.threadList = [Thread(target=self.calculatePhysics, args=(i,)) for i in range(self.numThreads)]
 
     def startThreads(self):
+        self.flRun = True
         for thread in self.threadList: thread.start()
         for thread in self.threadList: thread.join()
 
@@ -38,12 +40,12 @@ class PhysicsController(object):
         if degree != 0:
             mg = ball.mass * Config.Physics.GRAVITY * \
                  math.sin(abs(degree) * 180 / math.pi)
-            fric = ball.mass * Config.Physics.GRAVITY * \
+            friction = ball.mass * Config.Physics.GRAVITY * \
                    math.cos(abs(degree) * 180 / math.pi) * Config.Physics.FRICTION
-            if speed == 0 and mg > fric:
-                speed += direction * abs(mg - fric) / ball.mass
+            if speed == 0 and mg > friction:
+                speed += direction * abs(mg - friction) / ball.mass
             else:
-                speed += direction * abs(mg - fric) / ball.mass
+                speed += direction * abs(mg - friction) / ball.mass
 
         elif degree == 0:
             if speed > 0:
@@ -55,73 +57,76 @@ class PhysicsController(object):
 
         if axis == 'X':
             if ball.x + ball.radius > Config.Win.AREA_WIDTH:
-                ball.x = Config.Win.AREA_WIDTH - ball.radius
                 speed *= -(1 - Config.Physics.COLLISION_ENERGY_LOSS)
             if ball.x < ball.radius:
-                ball.x = ball.radius
                 speed *= -(1 - Config.Physics.COLLISION_ENERGY_LOSS)
         elif axis == 'Y':
             if ball.y + ball.radius > Config.Win.AREA_HEIGHT:
-                ball.y = Config.Win.AREA_HEIGHT - ball.radius
                 speed *= -(1 - Config.Physics.COLLISION_ENERGY_LOSS)
             if ball.y < ball.radius:
-                ball.y = ball.radius
                 speed *= -(1 - Config.Physics.COLLISION_ENERGY_LOSS)
 
         return speed
 
-    def getIndexCollision(self, ball):
-        for otherBall in self.ballsList:
-            if ball != otherBall and abs(ball.x - otherBall.x) < \
-                    (ball.radius + otherBall.radius) and \
-                    abs(ball.y - otherBall.y) < (ball.radius + otherBall.radius):
-                phi = 0
-                try:
-                    phi = math.atan((otherBall.y - ball.y) / (otherBall.x - ball.x))
-                except:
-                    phi = math.atan2((otherBall.y - ball.y), (otherBall.x - ball.x))
-                ball.x -= (ball.radius + otherBall.radius) * math.cos(phi) - abs(ball.x - otherBall.x)
-                ball.y -= (ball.radius + otherBall.radius) * math.sin(phi) - abs(ball.y - otherBall.y)
-                return self.ballsList.index(otherBall)
-        return -1
+    def distance(self,ball1,ball2):
+        return math.sqrt((ball1.x - ball2.x)**2 + (ball1.y - ball2.y)**2)
 
-    def caclulateCollision(self):
-        lstCollision = []
-        for ball in self.ballsList:
-            indexCollisionBall = self.getIndexCollision(ball)
-            if indexCollisionBall != -1:
-                ball2 = self.ballsList[indexCollisionBall]
-                tmpCollLst = [[self.ballsList.index(ball), indexCollisionBall],
-                              [indexCollisionBall, self.ballsList.index(ball)]]
+    def caclulateWallCollision(self,ball):
+        if ball.x + ball.radius > Config.Win.AREA_WIDTH:
+            ball.x = Config.Win.AREA_WIDTH - ball.radius
 
-                if ball2.y - ball.y == 0 and tmpCollLst[0] not in lstCollision:
-                    newSpeedX1 = (1 - Config.Physics.COLLISION_ENERGY_LOSS) * (
-                                (ball.mass - ball2.mass) * ball.speedX + 2 * ball2.mass * ball2.speedX) / (
-                                             ball.mass + ball2.mass)
-                    ball2.speedX = (1 - Config.Physics.COLLISION_ENERGY_LOSS) * (
-                                (ball2.mass - ball.mass) * ball2.speedX + 2 * ball.mass * ball.speedX) / (
-                                               ball.mass + ball2.mass)
-                    ball.speedX = newSpeedX1
-                if ball2.x - ball.x == 0 and tmpCollLst[0] not in lstCollision:
-                    newSpeedY1 = (1 - Config.Physics.COLLISION_ENERGY_LOSS) * (
-                            (ball.mass - ball2.mass) * ball.speedY + 2 * ball2.mass * ball2.speedY) / (
-                                         ball.mass + ball2.mass)
-                    ball2.speedY = (1 - Config.Physics.COLLISION_ENERGY_LOSS) * (
-                            (ball2.mass - ball.mass) * ball2.speedY + 2 * ball.mass * ball.speedY) / (
-                                           ball.mass + ball2.mass)
-                    ball.speedY = newSpeedY1
-                else:
-                    '''
-                    phi = math.atan((ball2.y - ball.y)/(ball2.x - ball.x))
-                    theta1 = math.atan(ball.speedY/ball.speedX)
-                    theta2 = math.atan(ball2.speedY/ball2.speedX)
-                    speedXY = math.sqrt(ball.speedX*ball.speedX+ball.speedY*ball.speedY)
-                    speedXY2 = math.sqrt(ball2.speedX*ball2.speedX+ball2.speedY*ball2.speedY)
-                    ball.speedX = (speedXY*math.cos(theta1-phi)*(ball.mass - ball2.mass)+2*ball2.mass*speedXY2*math.cos(theta2-phi))/(ball.mass + ball2.mass)*math.cos(phi)+speedXY*math.sin(theta1-phi)*math.cos(phi+math.pi/2)
-                    ball.speedY = (speedXY*math.cos(theta1-phi)*(ball.mass - ball2.mass)+2*ball2.mass*speedXY2*math.cos(theta2-phi))/(ball.mass + ball2.mass)*math.sin(phi)+speedXY*math.sin(theta1-phi)*math.sin(phi+math.pi/2)
-                    '''
-                if tmpCollLst not in lstCollision:
-                    lstCollision.extend(tmpCollLst)
+        if ball.x - ball.radius < 0:
+            ball.x = ball.radius
+
+        if ball.y + ball.radius > Config.Win.AREA_HEIGHT:
+            ball.y = Config.Win.AREA_HEIGHT - ball.radius
+
+        if ball.y - ball.radius < 0:
+            ball.y = ball.radius
+
+
+    def caclulateStaticCollision(self,ball1,ball2):
+        overlap = ball1.radius + ball2.radius - self.distance(ball1, ball2)
+        smallBall = ball1
+        bigBall = ball2
+        if smallBall.radius > bigBall.radius:
+            self.caclulateStaticCollision(ball2,ball1)
+        else:
+            while overlap<0:
+                theta = math.atan2((bigBall.y - smallBall.y), (bigBall.x - smallBall.x))
+                smallBall.x -= overlap * math.cos(theta)
+                smallBall.y -= overlap * math.sin(theta)
+
+    def caclulateBallCollision(self):
+            for i in range(len(self.ballsList)):
+                for j in range(i,len(self.ballsList)):
+                    ball1 = self.ballsList[i]
+                    ball2 = self.ballsList[j]
+                    if self.distance(ball1, ball2) < ball1.radius + ball2.radius:
+                        phi = math.atan2((ball2.y - ball1.y), (ball2.x - ball1.x))
+                        theta1 = ball1.angleBetweenSpeedXY()
+                        theta2 = ball2.angleBetweenSpeedXY()
+                        speed1 = ball1.speed()
+                        speed2 = ball2.speed()
+
+                        newSpeedX1 = (speed1 * math.cos(theta1 - phi) * (ball1.mass - ball2.mass) + 2 * ball2.mass * speed2 * math.cos(theta2 - phi)) / (
+                                    ball1.mass + ball2.mass) * math.cos(phi) + speed1 * math.sin(theta1 - phi) * math.cos(phi + math.pi / 2)
+
+                        newSpeedY1 = (speed1 * math.cos(theta1 - phi) * (ball1.mass - ball2.mass) + 2 * ball2.mass * speed2 * math.cos(theta2 - phi)) / (
+                                    ball1.mass + ball2.mass) * math.sin(phi) + speed1 * math.sin(theta1 - phi) * math.sin(phi + math.pi / 2)
+
+                        newSpeedX2 = (speed2 * math.cos(theta2 - phi) * (ball2.mass - ball1.mass) + 2 * ball1.mass * speed1 * math.cos(theta1 - phi)) / (
+                                    ball1.mass + ball2.mass) * math.cos(phi) + speed2 * math.sin(theta2 - phi) * math.cos(phi + math.pi / 2)
+
+                        newSpeedY2 = (speed2 * math.cos(theta2 - phi) * (ball2.mass - ball1.mass) + 2 * ball1.mass * speed1 * math.cos(theta1 - phi)) / (
+                                    ball1.mass + ball2.mass) * math.sin(phi) + speed2 * math.sin(theta2 - phi) * math.sin(phi + math.pi / 2)
+
+                        ball1.speedX = newSpeedX1
+                        ball1.speedY = newSpeedY1
+                        ball2.speedX = newSpeedX2
+                        ball2.speedY = newSpeedY2
+
+                        self.caclulateStaticCollision(ball1,ball2)
 
     def calculatePhysics(self, indexThread):
         for i in range(self.groupSize * indexThread,
@@ -129,13 +134,17 @@ class PhysicsController(object):
             if i < len(self.ballsList):
                 self.ballsList[i].speedX = self.caclulateSpeed(self.ballsList[i], self.degreeX, 'X')
                 self.ballsList[i].speedY = self.caclulateSpeed(self.ballsList[i], self.degreeY, 'Y')
-                self.ballsList[i].x += self.ballsList[i].speedX / 100
-                self.ballsList[i].y += self.ballsList[i].speedY / 100
-        if indexThread == 0:
-            self.caclulateCollision()
-            for i in range(len(self.ballsList)):
-                self.ballsList[i].x += self.ballsList[i].speedX / 100
-                self.ballsList[i].y += self.ballsList[i].speedY / 100
+
+                if indexThread == 0:
+                    self.caclulateBallCollision()
+                    self.flRun = False
+
+                while self.flRun: pass # wait other threads on first (indexThread = 0)
+
+                self.caclulateWallCollision(self.ballsList[i])
+                self.ballsList[i].x += self.ballsList[i].speedX * Config.Physics.DELTA_TIME
+                self.ballsList[i].y += self.ballsList[i].speedY * Config.Physics.DELTA_TIME
+
 
     def autoControl(self):
         if self.switch:
@@ -148,6 +157,7 @@ class PhysicsController(object):
                     self.degreeY = degree
             else:
                 self.counter -= 1
+
 
     def drawBalls(self, gameDisplay):
         for ball in self.ballsList: ball.drawBall(gameDisplay)
