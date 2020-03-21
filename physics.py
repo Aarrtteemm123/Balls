@@ -1,3 +1,7 @@
+from threading import Lock
+
+import pygame
+
 from config import Config
 from pygame.threads import Thread
 import math, random
@@ -7,12 +11,13 @@ class PhysicsController(object):
     def __init__(self, numThreads, ballsList):
         self.numThreads = numThreads
         self.threadList = []
+        self.lock = Lock()
         self.ballsList = ballsList
         self.degreeX = 0
         self.degreeY = 0
-        self.switch = False
+        self.flAutoControl = False
         self.counter = 0
-        self.flRun = True
+        self.numCollision = 0
         if len(self.ballsList) % self.numThreads != 0:
             self.groupSize = (len(self.ballsList) // self.numThreads) + 1
         else:
@@ -58,12 +63,24 @@ class PhysicsController(object):
         if axis == 'X':
             if ball.x + ball.radius > Config.Win.AREA_WIDTH:
                 speed *= -(1 - Config.Physics.COLLISION_ENERGY_LOSS)
+                self.lock.acquire()
+                self.numCollision += 1
+                self.lock.release()
             if ball.x < ball.radius:
                 speed *= -(1 - Config.Physics.COLLISION_ENERGY_LOSS)
+                self.lock.acquire()
+                self.numCollision += 1
+                self.lock.release()
         elif axis == 'Y':
             if ball.y + ball.radius > Config.Win.AREA_HEIGHT:
+                self.lock.acquire()
+                self.numCollision += 1
+                self.lock.release()
                 speed *= -(1 - Config.Physics.COLLISION_ENERGY_LOSS)
             if ball.y < ball.radius:
+                self.lock.acquire()
+                self.numCollision += 1
+                self.lock.release()
                 speed *= -(1 - Config.Physics.COLLISION_ENERGY_LOSS)
 
         return speed
@@ -125,6 +142,7 @@ class PhysicsController(object):
                         ball1.speedY = newSpeedY1
                         ball2.speedX = newSpeedX2
                         ball2.speedY = newSpeedY2
+                        self.numCollision+=1
 
                     self.caclulateStaticCollision(ball1,ball2)
 
@@ -132,12 +150,14 @@ class PhysicsController(object):
         for i in range(self.groupSize * indexThread,
                        self.groupSize * (indexThread + 1)):
             if i < len(self.ballsList):
+                if indexThread == 0: self.numCollision = 0
                 self.ballsList[i].speedX = self.caclulateSpeed(self.ballsList[i], self.degreeX, 'X')
                 self.ballsList[i].speedY = self.caclulateSpeed(self.ballsList[i], self.degreeY, 'Y')
 
-                if indexThread == 0:
+                if indexThread == 0 and Config.Physics.COLLISION:
                     self.caclulateBallCollision()
-                    self.flRun = False
+
+                if indexThread == 0: self.flRun = False
 
                 while self.flRun: pass # wait other threads on first (indexThread = 0)
 
@@ -147,7 +167,7 @@ class PhysicsController(object):
 
 
     def autoControl(self):
-        if self.switch:
+        if self.flAutoControl:
             if self.counter == 0:
                 degree = random.randint(-90, 90)
                 self.counter = random.randint(0, 50)
@@ -161,3 +181,23 @@ class PhysicsController(object):
 
     def drawBalls(self, gameDisplay):
         for ball in self.ballsList: ball.drawBall(gameDisplay)
+
+class Gyroscope(object):
+    def __init__(self):
+        self.x = 170
+        self.y = 500
+        self.lineEndX = 0
+        self.lineEndY = 0
+        self.radius = 50
+        self.maxDegreeX = 180
+        self.maxDegreeY = 180
+        self.color =  (0, 200, 200)
+        self.TO_RADIANS = math.pi/180
+
+    def calculateOrientation(self,degreeX,degreeY):
+        self.lineEndX = self.radius*math.cos(degreeX*self.TO_RADIANS)
+        self.lineEndX = self.radius*math.sin(degreeY*self.TO_RADIANS)
+
+    def draw(self,surface):
+        pygame.gfxdraw.circle(surface,int(self.x),int(self.y),int(self.radius),self.color)
+        pygame.gfxdraw.line(surface,int(self.x), int(self.y),int(self.lineEndX),int(self.lineEndY),self.color)

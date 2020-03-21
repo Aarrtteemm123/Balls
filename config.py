@@ -9,10 +9,11 @@ class Config(object):
         AREA_X = 350
         AREA_Y = 0
         AREA_COLOR = (255, 255, 255)
+        WIN_COLOR = (0,0,0)
         AREA_ALPHA = 0.0
 
     class Physics(object):
-        NUMBER_BALLS = 50
+        NUMBER_BALLS = 5
         MIN_RADIUS = 3
         MAX_RADIUS = 20
         GRAVITY = 9.8
