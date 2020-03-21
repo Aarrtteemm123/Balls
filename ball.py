@@ -18,12 +18,12 @@ class Ball(object):
         self.blue = 0
 
     def setRandomParameters(self):
-        self.radius = Config.Physics.RADIUS
+        self.radius = random.randint(Config.Physics.MIN_RADIUS, Config.Physics.MAX_RADIUS)
         self.x = random.randint(self.radius, Config.Win.AREA_WIDTH-self.radius)
         self.y = random.randint(self.radius, Config.Win.AREA_HEIGHT-self.radius)
         self.speedX = 0
         self.speedY = 0
-        self.mass = random.randrange(Config.Physics.MIN_MASS, Config.Physics.MAX_MASS)
+        self.mass = 4/3*math.pi*self.radius**3
         self.red = random.randrange(0, 255)
         self.green = random.randrange(0, 255)
         self.blue = random.randrange(0, 255)
@@ -36,4 +36,4 @@ class Ball(object):
 
     def drawBall(self, surface):
         pygame.gfxdraw.filled_circle(surface, int(self.x), int(self.y),
-                              self.radius, (self.red, self.green, self.blue))
+                                     self.radius, (self.red, self.green, self.blue))

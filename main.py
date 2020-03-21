@@ -1,5 +1,7 @@
 import time
 import pygame
+
+from GUI import Interface
 from ball import Ball
 from config import Config
 from physics import PhysicsController
@@ -22,20 +24,20 @@ def createBalls(number):
 
 if __name__ == '__main__':
     pygame.init()
-    clock = pygame.time.Clock()
     window = pygame.display.set_mode((Config.Win.WIN_WIDTH, Config.Win.WIN_HEIGHT))
     pygame.display.set_caption(Config.Win.WIN_TITLE)
     gameDisplay = pygame.Surface((Config.Win.AREA_WIDTH, Config.Win.AREA_HEIGHT))
-    pc = PhysicsController(1,  createBalls(20))
+    pc = PhysicsController(15,  createBalls(30))
     run = True
     pc.switch = True
+    interface = Interface()
+    interface.update()
     while run:
         start = time.perf_counter()
         pc.drawBalls(gameDisplay)
         pc.createThreads()
         pc.startThreads()
         #pc.autoControl()
-       # print(start - time.clock())
         for e in pygame.event.get():
             if e.type == pygame.QUIT:
                 run = False
@@ -53,8 +55,8 @@ if __name__ == '__main__':
                     pc.degreeY += 5
                     print("Y: " + str(pc.degreeY))
         window.blit(gameDisplay, (Config.Win.AREA_X, Config.Win.AREA_Y))
+        interface.renderText(30,10,20,window)
         pygame.display.update()
         gameDisplay.fill(Config.Win.AREA_COLOR)
         finish = time.perf_counter() - start
         print(int(1/finish))
-        #clock.tick(FPS)

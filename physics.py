@@ -84,18 +84,18 @@ class PhysicsController(object):
         if ball.y - ball.radius < 0:
             ball.y = ball.radius
 
-
     def caclulateStaticCollision(self,ball1,ball2):
-        overlap = ball1.radius + ball2.radius - self.distance(ball1, ball2)
-        smallBall = ball1
-        bigBall = ball2
-        if smallBall.radius > bigBall.radius:
-            self.caclulateStaticCollision(ball2,ball1)
-        else:
-            while overlap<0:
+        if ball1!=ball2:
+            overlap = ball1.radius + ball2.radius - self.distance(ball1, ball2)
+            smallBall = ball1
+            bigBall = ball2
+            if smallBall.radius>bigBall.radius:
+                smallBall,bigBall = bigBall,smallBall
+            if overlap>0:
                 theta = math.atan2((bigBall.y - smallBall.y), (bigBall.x - smallBall.x))
                 smallBall.x -= overlap * math.cos(theta)
                 smallBall.y -= overlap * math.sin(theta)
+
 
     def caclulateBallCollision(self):
             for i in range(len(self.ballsList)):
@@ -126,7 +126,7 @@ class PhysicsController(object):
                         ball2.speedX = newSpeedX2
                         ball2.speedY = newSpeedY2
 
-                        self.caclulateStaticCollision(ball1,ball2)
+                    self.caclulateStaticCollision(ball1,ball2)
 
     def calculatePhysics(self, indexThread):
         for i in range(self.groupSize * indexThread,
