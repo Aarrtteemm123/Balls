@@ -32,6 +32,8 @@ class Application(object):
             finishTime = time.perf_counter()
             self.frameTime = finishTime - startTime
             self.counterInfoUpdate-=1
+            self.gui.txtDegreeX = font.render('Degree X: ' + str(self.pc.degreeX), True,self.DEFAULT_TEXT_COLOR)
+            self.gui.txtDegreeY = font.render('Degree Y: ' + str(self.pc.degreeY), True,self.DEFAULT_TEXT_COLOR)
             if self.counterInfoUpdate == 0:
                 self.counterInfoUpdate = 20
                 self.gui.txtFrameTime = font.render('Frame time: '+str(int(1000*self.frameTime)), True, self.DEFAULT_TEXT_COLOR)
@@ -47,14 +49,16 @@ class Application(object):
             elif e.type == pygame.KEYDOWN:
                 if e.key == pygame.K_a:
                     self.pc.degreeX -= 5
+                    if self.pc.degreeX<-90: self.pc.degreeX = -90
                 elif e.key == pygame.K_d:
                     self.pc.degreeX += 5
+                    if self.pc.degreeX > 90: self.pc.degreeX = 90
                 elif e.key == pygame.K_w:
                     self.pc.degreeY -= 5
+                    if self.pc.degreeY < -90: self.pc.degreeY = -90
                 elif e.key == pygame.K_s:
                     self.pc.degreeY += 5
-                elif e.key == pygame.K_s:
-                    self.pc.degreeY += 5
+                    if self.pc.degreeY > 90: self.pc.degreeY = 90
 
 
     def createBalls(self,number):

@@ -150,7 +150,6 @@ class PhysicsController(object):
         for i in range(self.groupSize * indexThread,
                        self.groupSize * (indexThread + 1)):
             if i < len(self.ballsList):
-                if indexThread == 0: self.numCollision = 0
                 self.ballsList[i].speedX = self.caclulateSpeed(self.ballsList[i], self.degreeX, 'X')
                 self.ballsList[i].speedY = self.caclulateSpeed(self.ballsList[i], self.degreeY, 'Y')
 
@@ -185,19 +184,24 @@ class PhysicsController(object):
 class Gyroscope(object):
     def __init__(self):
         self.x = 170
-        self.y = 500
+        self.y = 520
         self.lineEndX = 0
         self.lineEndY = 0
         self.radius = 50
-        self.maxDegreeX = 180
-        self.maxDegreeY = 180
         self.color =  (0, 200, 200)
         self.TO_RADIANS = math.pi/180
 
     def calculateOrientation(self,degreeX,degreeY):
-        self.lineEndX = self.radius*math.cos(degreeX*self.TO_RADIANS)
-        self.lineEndX = self.radius*math.sin(degreeY*self.TO_RADIANS)
+        self.lineEndX = self.radius*math.cos((degreeX-90)*self.TO_RADIANS)+170
+        self.lineEndY = self.radius*math.sin(degreeY*self.TO_RADIANS)+520
+        distance = math.sqrt((self.x-self.lineEndX)**2+(self.y-self.lineEndY)**2)
+        overlap = distance-self.radius
+        if overlap>0:
+            angle = math.atan2((self.lineEndY-self.y),(self.lineEndX-self.x))
+            self.lineEndX-=overlap*math.cos(angle)
+            self.lineEndY-=overlap*math.sin(angle)
+
 
     def draw(self,surface):
-        pygame.gfxdraw.circle(surface,int(self.x),int(self.y),int(self.radius),self.color)
+        pygame.gfxdraw.circle(surface,int(self.x),int(self.y),int(self.radius+2),self.color)
         pygame.gfxdraw.line(surface,int(self.x), int(self.y),int(self.lineEndX),int(self.lineEndY),self.color)

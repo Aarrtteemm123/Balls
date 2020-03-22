@@ -28,13 +28,15 @@ class Interface(object):
         self.txtW = self.font.render('Incline forward: W', True, self.DEFAULT_TEXT_COLOR)
         self.txtS = self.font.render('Incline back: S', True, self.DEFAULT_TEXT_COLOR)
         self.txtOrientation = self.font.render('                              Orientation', True, self.DEFAULT_TEXT_COLOR)
+        self.txtDegreeX = self.font.render('Degree X: 0', True, self.DEFAULT_TEXT_COLOR)
+        self.txtDegreeY = self.font.render('Degree Y: 0', True, self.DEFAULT_TEXT_COLOR)
         self.gyroscope = Gyroscope()
 
     def __updateText(self):
         self.txtList = [self.txtSimulation, self.txtFPS, self.txtFrameTime, self.txtNumThreads, self.txtNumBalls,
                         self.txtNumCollision, self.txtControls, self.txtStart, self.txtReset, self.txtCollision,
                         self.txtAutoControl, self.txtD, self.txtA, self.txtW,
-                        self.txtS, self.txtOrientation]
+                        self.txtS, self.txtOrientation,self.txtDegreeX,self.txtDegreeY]
 
     def updateGyroscope(self,degreeX,degreeY):
         self.gyroscope.calculateOrientation(degreeX, degreeY)
