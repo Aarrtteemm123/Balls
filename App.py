@@ -1,4 +1,6 @@
 import time
+from threading import Thread
+
 import pygame
 
 from GUI import Interface
@@ -34,34 +36,39 @@ class Application(object):
             self.gui.updateWindow()
             finishTime = time.perf_counter()
             self.frameTime = finishTime - startTime
+            self.pc.deltaTime = Config.Physics.DELTA_TIME * self.frameTime * 500
             self.counterInfoUpdate -= 1
-            self.gui.txtDegreeX = font.render('Degree X: ' + str(self.pc.degreeX), True, self.DEFAULT_TEXT_COLOR)
-            self.gui.txtDegreeY = font.render('Degree Y: ' + str(self.pc.degreeY), True, self.DEFAULT_TEXT_COLOR)
+            self.gui.txtDegreeX = font.render('Degree X:  ' + str(round(self.pc.degreeX, 2)), True,
+                                              self.DEFAULT_TEXT_COLOR)
+            self.gui.txtDegreeY = font.render('Degree Y:  ' + str(round(self.pc.degreeY, 2)), True,
+                                              self.DEFAULT_TEXT_COLOR)
             if self.counterInfoUpdate == 0:
                 self.counterInfoUpdate = 20
-                self.gui.txtFrameTime = font.render('Frame time: ' + str(int(1000 * self.frameTime)), True,
+                self.gui.txtFrameTime = font.render('Frame time:  ' + str(int(1000 * self.frameTime)), True,
                                                     self.DEFAULT_TEXT_COLOR)
-                self.gui.txtFPS = font.render('FPS: ' + str(int(1 / self.frameTime)), True, self.DEFAULT_TEXT_COLOR)
-                self.gui.txtNumThreads = font.render('Threads: ' + str(Config.App.NUMBER_THREADS), True,
+                self.gui.txtFPS = font.render('FPS:  ' + str(int(1 / self.frameTime)), True, self.DEFAULT_TEXT_COLOR)
+                self.gui.txtNumThreads = font.render('Threads:  ' + str(Config.App.NUMBER_THREADS), True,
                                                      self.DEFAULT_TEXT_COLOR)
-                self.gui.txtNumBalls = font.render('Balls: ' + str(Config.Physics.NUMBER_BALLS), True,
+                self.gui.txtNumBalls = font.render('Balls:  ' + str(Config.Physics.NUMBER_BALLS), True,
                                                    self.DEFAULT_TEXT_COLOR)
-                self.gui.txtNumCollision = font.render('Collision/frame: ' + str(self.pc.numCollision), True,
-                                                       self.DEFAULT_TEXT_COLOR)
+                self.gui.txtNumCollision = font.render(
+                    'Collision/sec:  ' + str(int(self.pc.numCollision / self.frameTime)), True,
+                    self.DEFAULT_TEXT_COLOR)
+                self.pc.numCollision = 0
 
     def control(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
-            self.pc.degreeX -= self.frameTime*100
+            self.pc.degreeX -= self.frameTime * 100
             if self.pc.degreeX < -90: self.pc.degreeX = -90
         if keys[pygame.K_d]:
-            self.pc.degreeX += self.frameTime*100
+            self.pc.degreeX += self.frameTime * 100
             if self.pc.degreeX > 90: self.pc.degreeX = 90
         if keys[pygame.K_w]:
-            self.pc.degreeY -= self.frameTime*100
+            self.pc.degreeY -= self.frameTime * 100
             if self.pc.degreeY < -90: self.pc.degreeY = -90
         if keys[pygame.K_s]:
-            self.pc.degreeY += self.frameTime*100
+            self.pc.degreeY += self.frameTime * 100
             if self.pc.degreeY > 90: self.pc.degreeY = 90
         for e in pygame.event.get():
             if e.type == pygame.QUIT:

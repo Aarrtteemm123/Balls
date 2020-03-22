@@ -17,6 +17,7 @@ class PhysicsController(object):
         self.degreeY = 0
         self.flAutoControl = False
         self.counter = 0
+        self.deltaTime = 0.001
         self.numCollision = 0
         if len(self.ballsList) % self.numThreads != 0:
             self.groupSize = (len(self.ballsList) // self.numThreads) + 1
@@ -126,22 +127,22 @@ class PhysicsController(object):
                     speed2 = ball2.speed()
 
                     newSpeedX1 = (speed1 * math.cos(theta1 - phi) * (
-                                ball1.mass - ball2.mass) + 2 * ball2.mass * speed2 * math.cos(theta2 - phi)) / (
+                            ball1.mass - ball2.mass) + 2 * ball2.mass * speed2 * math.cos(theta2 - phi)) / (
                                          ball1.mass + ball2.mass) * math.cos(phi) + speed1 * math.sin(
                         theta1 - phi) * math.cos(phi + math.pi / 2)
 
                     newSpeedY1 = (speed1 * math.cos(theta1 - phi) * (
-                                ball1.mass - ball2.mass) + 2 * ball2.mass * speed2 * math.cos(theta2 - phi)) / (
+                            ball1.mass - ball2.mass) + 2 * ball2.mass * speed2 * math.cos(theta2 - phi)) / (
                                          ball1.mass + ball2.mass) * math.sin(phi) + speed1 * math.sin(
                         theta1 - phi) * math.sin(phi + math.pi / 2)
 
                     newSpeedX2 = (speed2 * math.cos(theta2 - phi) * (
-                                ball2.mass - ball1.mass) + 2 * ball1.mass * speed1 * math.cos(theta1 - phi)) / (
+                            ball2.mass - ball1.mass) + 2 * ball1.mass * speed1 * math.cos(theta1 - phi)) / (
                                          ball1.mass + ball2.mass) * math.cos(phi) + speed2 * math.sin(
                         theta2 - phi) * math.cos(phi + math.pi / 2)
 
                     newSpeedY2 = (speed2 * math.cos(theta2 - phi) * (
-                                ball2.mass - ball1.mass) + 2 * ball1.mass * speed1 * math.cos(theta1 - phi)) / (
+                            ball2.mass - ball1.mass) + 2 * ball1.mass * speed1 * math.cos(theta1 - phi)) / (
                                          ball1.mass + ball2.mass) * math.sin(phi) + speed2 * math.sin(
                         theta2 - phi) * math.sin(phi + math.pi / 2)
 
@@ -168,8 +169,8 @@ class PhysicsController(object):
                 while self.flRun: pass  # wait other threads on first (indexThread = 0)
 
                 self.caclulateWallCollision(self.ballsList[i])
-                self.ballsList[i].x += self.ballsList[i].speedX * Config.Physics.DELTA_TIME
-                self.ballsList[i].y += self.ballsList[i].speedY * Config.Physics.DELTA_TIME
+                self.ballsList[i].x += self.ballsList[i].speedX * self.deltaTime
+                self.ballsList[i].y += self.ballsList[i].speedY * self.deltaTime
 
     def autoControl(self):
         if self.flAutoControl:

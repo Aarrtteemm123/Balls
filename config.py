@@ -1,3 +1,6 @@
+import os
+
+
 class Config(object):
     class Win(object):
         WIN_WIDTH = 950
@@ -12,15 +15,14 @@ class Config(object):
         AREA_ALPHA = 0.0
 
     class Physics(object):
-        NUMBER_BALLS = 100
+        NUMBER_BALLS = 1
         MIN_RADIUS = 3
         MAX_RADIUS = 20
         GRAVITY = 9.8
-        FRICTION = 0.05
-        COLLISION_ENERGY_LOSS = 0.2
-        DELTA_TIME = 0.01
+        FRICTION = 0.1
+        COLLISION_ENERGY_LOSS = 0.25
+        DELTA_TIME = 0.001
         COLLISION = False
 
     class App(object):
-        FPS_LIMIT = 60
-        NUMBER_THREADS = 4
+        NUMBER_THREADS = os.cpu_count() * 2

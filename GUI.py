@@ -18,7 +18,7 @@ class Interface(object):
         self.txtNumThreads = self.font.render('Threads: ' + str(Config.App.NUMBER_THREADS), True,
                                               self.DEFAULT_TEXT_COLOR)
         self.txtNumBalls = self.font.render('Balls: ' + str(Config.Physics.NUMBER_BALLS), True, self.DEFAULT_TEXT_COLOR)
-        self.txtNumCollision = self.font.render('Collision/frame: ' + str(Config.App.NUMBER_THREADS), True,
+        self.txtNumCollision = self.font.render('Collision/sec: 0', True,
                                                 self.DEFAULT_TEXT_COLOR)
         self.txtControls = self.font.render('                               Controls', True, self.DEFAULT_TEXT_COLOR)
         self.txtStart = self.font.render('Start/Stop: space', True, self.DEFAULT_TEXT_COLOR)
