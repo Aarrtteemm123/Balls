@@ -1,6 +1,6 @@
 import random
 
-import pygame,math
+import pygame, math
 from pygame import gfxdraw
 from config import Config
 
@@ -19,17 +19,17 @@ class Ball(object):
 
     def setRandomParameters(self):
         self.radius = random.randint(Config.Physics.MIN_RADIUS, Config.Physics.MAX_RADIUS)
-        self.x = random.randint(self.radius, Config.Win.AREA_WIDTH-self.radius)
-        self.y = random.randint(self.radius, Config.Win.AREA_HEIGHT-self.radius)
+        self.x = random.randint(self.radius, Config.Win.AREA_WIDTH - self.radius)
+        self.y = random.randint(self.radius, Config.Win.AREA_HEIGHT - self.radius)
         self.speedX = 0
         self.speedY = 0
-        self.mass = 4/3*math.pi*self.radius**3
+        self.mass = 4 / 3 * math.pi * self.radius ** 3
         self.red = random.randrange(0, 255)
         self.green = random.randrange(0, 255)
         self.blue = random.randrange(0, 255)
 
     def speed(self):
-        return math.sqrt(self.speedX**2 + self.speedY**2)
+        return math.sqrt(self.speedX ** 2 + self.speedY ** 2)
 
     def angleBetweenSpeedXY(self):
         return math.atan2(self.speedY, self.speedX)

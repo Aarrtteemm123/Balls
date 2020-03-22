@@ -46,7 +46,7 @@ class PhysicsController(object):
             mg = ball.mass * Config.Physics.GRAVITY * \
                  math.sin(abs(degree) * 180 / math.pi)
             friction = ball.mass * Config.Physics.GRAVITY * \
-                   math.cos(abs(degree) * 180 / math.pi) * Config.Physics.FRICTION
+                       math.cos(abs(degree) * 180 / math.pi) * Config.Physics.FRICTION
             if speed == 0 and mg > friction:
                 speed += direction * abs(mg - friction) / ball.mass
             else:
@@ -85,10 +85,10 @@ class PhysicsController(object):
 
         return speed
 
-    def distance(self,ball1,ball2):
-        return math.sqrt((ball1.x - ball2.x)**2 + (ball1.y - ball2.y)**2)
+    def distance(self, ball1, ball2):
+        return math.sqrt((ball1.x - ball2.x) ** 2 + (ball1.y - ball2.y) ** 2)
 
-    def caclulateWallCollision(self,ball):
+    def caclulateWallCollision(self, ball):
         if ball.x + ball.radius > Config.Win.AREA_WIDTH:
             ball.x = Config.Win.AREA_WIDTH - ball.radius
 
@@ -101,50 +101,57 @@ class PhysicsController(object):
         if ball.y - ball.radius < 0:
             ball.y = ball.radius
 
-    def caclulateStaticCollision(self,ball1,ball2):
-        if ball1!=ball2:
+    def caclulateStaticCollision(self, ball1, ball2):
+        if ball1 != ball2:
             overlap = ball1.radius + ball2.radius - self.distance(ball1, ball2)
             smallBall = ball1
             bigBall = ball2
-            if smallBall.radius>bigBall.radius:
-                smallBall,bigBall = bigBall,smallBall
-            if overlap>0:
+            if smallBall.radius > bigBall.radius:
+                smallBall, bigBall = bigBall, smallBall
+            if overlap > 0:
                 theta = math.atan2((bigBall.y - smallBall.y), (bigBall.x - smallBall.x))
                 smallBall.x -= overlap * math.cos(theta)
                 smallBall.y -= overlap * math.sin(theta)
 
-
     def caclulateBallCollision(self):
-            for i in range(len(self.ballsList)):
-                for j in range(i,len(self.ballsList)):
-                    ball1 = self.ballsList[i]
-                    ball2 = self.ballsList[j]
-                    if self.distance(ball1, ball2) < ball1.radius + ball2.radius:
-                        phi = math.atan2((ball2.y - ball1.y), (ball2.x - ball1.x))
-                        theta1 = ball1.angleBetweenSpeedXY()
-                        theta2 = ball2.angleBetweenSpeedXY()
-                        speed1 = ball1.speed()
-                        speed2 = ball2.speed()
+        for i in range(len(self.ballsList)):
+            for j in range(i, len(self.ballsList)):
+                ball1 = self.ballsList[i]
+                ball2 = self.ballsList[j]
+                if self.distance(ball1, ball2) < ball1.radius + ball2.radius:
+                    phi = math.atan2((ball2.y - ball1.y), (ball2.x - ball1.x))
+                    theta1 = ball1.angleBetweenSpeedXY()
+                    theta2 = ball2.angleBetweenSpeedXY()
+                    speed1 = ball1.speed()
+                    speed2 = ball2.speed()
 
-                        newSpeedX1 = (speed1 * math.cos(theta1 - phi) * (ball1.mass - ball2.mass) + 2 * ball2.mass * speed2 * math.cos(theta2 - phi)) / (
-                                    ball1.mass + ball2.mass) * math.cos(phi) + speed1 * math.sin(theta1 - phi) * math.cos(phi + math.pi / 2)
+                    newSpeedX1 = (speed1 * math.cos(theta1 - phi) * (
+                                ball1.mass - ball2.mass) + 2 * ball2.mass * speed2 * math.cos(theta2 - phi)) / (
+                                         ball1.mass + ball2.mass) * math.cos(phi) + speed1 * math.sin(
+                        theta1 - phi) * math.cos(phi + math.pi / 2)
 
-                        newSpeedY1 = (speed1 * math.cos(theta1 - phi) * (ball1.mass - ball2.mass) + 2 * ball2.mass * speed2 * math.cos(theta2 - phi)) / (
-                                    ball1.mass + ball2.mass) * math.sin(phi) + speed1 * math.sin(theta1 - phi) * math.sin(phi + math.pi / 2)
+                    newSpeedY1 = (speed1 * math.cos(theta1 - phi) * (
+                                ball1.mass - ball2.mass) + 2 * ball2.mass * speed2 * math.cos(theta2 - phi)) / (
+                                         ball1.mass + ball2.mass) * math.sin(phi) + speed1 * math.sin(
+                        theta1 - phi) * math.sin(phi + math.pi / 2)
 
-                        newSpeedX2 = (speed2 * math.cos(theta2 - phi) * (ball2.mass - ball1.mass) + 2 * ball1.mass * speed1 * math.cos(theta1 - phi)) / (
-                                    ball1.mass + ball2.mass) * math.cos(phi) + speed2 * math.sin(theta2 - phi) * math.cos(phi + math.pi / 2)
+                    newSpeedX2 = (speed2 * math.cos(theta2 - phi) * (
+                                ball2.mass - ball1.mass) + 2 * ball1.mass * speed1 * math.cos(theta1 - phi)) / (
+                                         ball1.mass + ball2.mass) * math.cos(phi) + speed2 * math.sin(
+                        theta2 - phi) * math.cos(phi + math.pi / 2)
 
-                        newSpeedY2 = (speed2 * math.cos(theta2 - phi) * (ball2.mass - ball1.mass) + 2 * ball1.mass * speed1 * math.cos(theta1 - phi)) / (
-                                    ball1.mass + ball2.mass) * math.sin(phi) + speed2 * math.sin(theta2 - phi) * math.sin(phi + math.pi / 2)
+                    newSpeedY2 = (speed2 * math.cos(theta2 - phi) * (
+                                ball2.mass - ball1.mass) + 2 * ball1.mass * speed1 * math.cos(theta1 - phi)) / (
+                                         ball1.mass + ball2.mass) * math.sin(phi) + speed2 * math.sin(
+                        theta2 - phi) * math.sin(phi + math.pi / 2)
 
-                        ball1.speedX = newSpeedX1
-                        ball1.speedY = newSpeedY1
-                        ball2.speedX = newSpeedX2
-                        ball2.speedY = newSpeedY2
-                        self.numCollision+=1
+                    ball1.speedX = newSpeedX1
+                    ball1.speedY = newSpeedY1
+                    ball2.speedX = newSpeedX2
+                    ball2.speedY = newSpeedY2
+                    self.numCollision += 1
 
-                    self.caclulateStaticCollision(ball1,ball2)
+                self.caclulateStaticCollision(ball1, ball2)
 
     def calculatePhysics(self, indexThread):
         for i in range(self.groupSize * indexThread,
@@ -158,12 +165,11 @@ class PhysicsController(object):
 
                 if indexThread == 0: self.flRun = False
 
-                while self.flRun: pass # wait other threads on first (indexThread = 0)
+                while self.flRun: pass  # wait other threads on first (indexThread = 0)
 
                 self.caclulateWallCollision(self.ballsList[i])
                 self.ballsList[i].x += self.ballsList[i].speedX * Config.Physics.DELTA_TIME
                 self.ballsList[i].y += self.ballsList[i].speedY * Config.Physics.DELTA_TIME
-
 
     def autoControl(self):
         if self.flAutoControl:
@@ -177,9 +183,9 @@ class PhysicsController(object):
             else:
                 self.counter -= 1
 
-
     def drawBalls(self, gameDisplay):
         for ball in self.ballsList: ball.drawBall(gameDisplay)
+
 
 class Gyroscope(object):
     def __init__(self):
@@ -188,20 +194,19 @@ class Gyroscope(object):
         self.lineEndX = 0
         self.lineEndY = 0
         self.radius = 50
-        self.color =  (0, 200, 200)
-        self.TO_RADIANS = math.pi/180
+        self.color = (0, 200, 200)
+        self.TO_RADIANS = math.pi / 180
 
-    def calculateOrientation(self,degreeX,degreeY):
-        self.lineEndX = self.radius*math.cos((degreeX-90)*self.TO_RADIANS)+170
-        self.lineEndY = self.radius*math.sin(degreeY*self.TO_RADIANS)+520
-        distance = math.sqrt((self.x-self.lineEndX)**2+(self.y-self.lineEndY)**2)
-        overlap = distance-self.radius
-        if overlap>0:
-            angle = math.atan2((self.lineEndY-self.y),(self.lineEndX-self.x))
-            self.lineEndX-=overlap*math.cos(angle)
-            self.lineEndY-=overlap*math.sin(angle)
+    def calculateOrientation(self, degreeX, degreeY):
+        self.lineEndX = self.radius * math.cos((degreeX - 90) * self.TO_RADIANS) + 170
+        self.lineEndY = self.radius * math.sin(degreeY * self.TO_RADIANS) + 520
+        distance = math.sqrt((self.x - self.lineEndX) ** 2 + (self.y - self.lineEndY) ** 2)
+        overlap = distance - self.radius
+        if overlap > 0:
+            angle = math.atan2((self.lineEndY - self.y), (self.lineEndX - self.x))
+            self.lineEndX -= overlap * math.cos(angle)
+            self.lineEndY -= overlap * math.sin(angle)
 
-
-    def draw(self,surface):
-        pygame.gfxdraw.circle(surface,int(self.x),int(self.y),int(self.radius+2),self.color)
-        pygame.gfxdraw.line(surface,int(self.x), int(self.y),int(self.lineEndX),int(self.lineEndY),self.color)
+    def draw(self, surface):
+        pygame.gfxdraw.circle(surface, int(self.x), int(self.y), int(self.radius + 2), self.color)
+        pygame.gfxdraw.line(surface, int(self.x), int(self.y), int(self.lineEndX), int(self.lineEndY), self.color)
