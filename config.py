@@ -1,28 +1,37 @@
 import os
+import pickle
 
 
 class Config(object):
+    def __init__(self):
+        self.win = self.Win()
+        self.physics = self.Physics()
+        self.app = self.App()
+
     class Win(object):
-        WIN_WIDTH = 950
-        WIN_HEIGHT = 600
-        WIN_TITLE = "Balls"
-        AREA_WIDTH = 600
-        AREA_HEIGHT = 600
-        AREA_X = 350
-        AREA_Y = 0
-        AREA_COLOR = (255, 255, 255)
-        WIN_COLOR = (0, 0, 0)
-        AREA_ALPHA = 0.0
+        def __init__(self):
+            self.WIN_WIDTH = 950
+            self.WIN_HEIGHT = 600
+            self.WIN_TITLE = "Balls"
+            self.AREA_WIDTH = 600
+            self.AREA_HEIGHT = 600
+            self.AREA_X = 350
+            self.AREA_Y = 0
+            self.AREA_COLOR = (255, 255, 255)
+            self.WIN_COLOR = (0, 0, 0)
+            self.AREA_ALPHA = 0.0
 
     class Physics(object):
-        NUMBER_BALLS = 1
-        MIN_RADIUS = 3
-        MAX_RADIUS = 20
-        GRAVITY = 9.8
-        FRICTION = 0.1
-        COLLISION_ENERGY_LOSS = 0.25
-        DELTA_TIME = 0.001
-        COLLISION = False
+        def __init__(self):
+            self.NUMBER_BALLS = 30
+            self.MIN_RADIUS = 3
+            self.MAX_RADIUS = 20
+            self.GRAVITY = 9.8
+            self.FRICTION = 0.1
+            self.COLLISION_ENERGY_LOSS = 0.25
+            self.DELTA_TIME = 0.001
+            self.COLLISION = False
 
     class App(object):
-        NUMBER_THREADS = os.cpu_count() * 2
+        def __init__(self):
+            self.NUMBER_THREADS = os.cpu_count() * 2

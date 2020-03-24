@@ -5,21 +5,24 @@ from physics import Gyroscope
 
 
 class Interface(object):
-    def __init__(self):
-        self.window = pygame.display.set_mode((Config.Win.WIN_WIDTH, Config.Win.WIN_HEIGHT))
-        pygame.display.set_caption(Config.Win.WIN_TITLE)
-        self.gameDisplay = pygame.Surface((Config.Win.AREA_WIDTH, Config.Win.AREA_HEIGHT))
+    def __init__(self,config):
+        self.config = config
+        self.window = pygame.display.set_mode((self.config.win.WIN_WIDTH, self.config.win.WIN_HEIGHT))
+        pygame.display.set_caption(self.config.win.WIN_TITLE)
+        self.gameDisplay = pygame.Surface((self.config.win.AREA_WIDTH, self.config.win.AREA_HEIGHT))
         self.DEFAULT_TEXT_COLOR = (0, 200, 200)
         self.font = pygame.font.Font('Michroma.ttf', 15)
         self.txtSimulation = self.font.render('                               Simulation', True,
                                               self.DEFAULT_TEXT_COLOR)
         self.txtFPS = self.font.render('FPS: 0', True, self.DEFAULT_TEXT_COLOR)
         self.txtFrameTime = self.font.render('Frame time: 0', True, self.DEFAULT_TEXT_COLOR)
-        self.txtNumThreads = self.font.render('Threads: ' + str(Config.App.NUMBER_THREADS), True,
+        self.txtNumThreads = self.font.render('Threads: ' + str(self.config.app.NUMBER_THREADS), True,
                                               self.DEFAULT_TEXT_COLOR)
-        self.txtNumBalls = self.font.render('Balls: ' + str(Config.Physics.NUMBER_BALLS), True, self.DEFAULT_TEXT_COLOR)
+        self.txtNumBalls = self.font.render('Balls: ' + str(self.config.physics.NUMBER_BALLS), True, self.DEFAULT_TEXT_COLOR)
         self.txtNumCollision = self.font.render('Collision/sec: 0', True,
                                                 self.DEFAULT_TEXT_COLOR)
+        self.txtAvgSpeed = self.font.render('Avg speed: 0', True,
+                                            self.DEFAULT_TEXT_COLOR)
         self.txtControls = self.font.render('                               Controls', True, self.DEFAULT_TEXT_COLOR)
         self.txtStart = self.font.render('Start/Stop: space', True, self.DEFAULT_TEXT_COLOR)
         self.txtReset = self.font.render('Reset: R', True, self.DEFAULT_TEXT_COLOR)
@@ -37,7 +40,8 @@ class Interface(object):
 
     def __updateText(self):
         self.txtList = [self.txtSimulation, self.txtFPS, self.txtFrameTime, self.txtNumThreads, self.txtNumBalls,
-                        self.txtNumCollision, self.txtControls, self.txtStart, self.txtReset, self.txtCollision,
+                        self.txtNumCollision, self.txtAvgSpeed, self.txtControls, self.txtStart, self.txtReset,
+                        self.txtCollision,
                         self.txtAutoControl, self.txtD, self.txtA, self.txtW,
                         self.txtS, self.txtOrientation, self.txtDegreeX, self.txtDegreeY]
 
@@ -45,10 +49,10 @@ class Interface(object):
         self.gyroscope.calculateOrientation(degreeX, degreeY)
 
     def updateWindow(self):
-        self.window.blit(self.gameDisplay, (Config.Win.AREA_X, Config.Win.AREA_Y))
+        self.window.blit(self.gameDisplay, (self.config.win.AREA_X, self.config.win.AREA_Y))
         pygame.display.update()
-        self.gameDisplay.fill(Config.Win.AREA_COLOR)
-        self.window.fill(Config.Win.WIN_COLOR)
+        self.gameDisplay.fill(self.config.win.AREA_COLOR)
+        self.window.fill(self.config.win.WIN_COLOR)
 
     def renderText(self):
         self.__updateText()

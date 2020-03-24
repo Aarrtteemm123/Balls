@@ -6,7 +6,8 @@ from config import Config
 
 
 class Ball(object):
-    def __init__(self):
+    def __init__(self,config):
+        self.config = config
         self.radius = 10
         self.x = 0
         self.y = 0
@@ -18,9 +19,9 @@ class Ball(object):
         self.blue = 0
 
     def setRandomParameters(self):
-        self.radius = random.randint(Config.Physics.MIN_RADIUS, Config.Physics.MAX_RADIUS)
-        self.x = random.randint(self.radius, Config.Win.AREA_WIDTH - self.radius)
-        self.y = random.randint(self.radius, Config.Win.AREA_HEIGHT - self.radius)
+        self.radius = random.randint(self.config.physics.MIN_RADIUS, self.config.physics.MAX_RADIUS)
+        self.x = random.randint(self.radius, self.config.win.AREA_WIDTH - self.radius)
+        self.y = random.randint(self.radius, self.config.win.AREA_HEIGHT - self.radius)
         self.speedX = 0
         self.speedY = 0
         self.mass = 4 / 3 * math.pi * self.radius ** 3
