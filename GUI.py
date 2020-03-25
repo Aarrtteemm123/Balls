@@ -9,6 +9,7 @@ class Interface(object):
         pygame.display.set_caption(self.config.win.WIN_TITLE)
         self.gameDisplay = pygame.Surface((self.config.win.AREA_WIDTH, self.config.win.AREA_HEIGHT))
         self.DEFAULT_TEXT_COLOR = (0, 200, 200)
+        pygame.display.set_icon(pygame.image.load('gameIcon.png'))
         self.font = pygame.font.Font('Michroma.ttf', 15)
         self.txtSimulation = self.font.render('                               Simulation', True,
                                               self.DEFAULT_TEXT_COLOR)

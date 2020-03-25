@@ -8,6 +8,7 @@ class GUIConfig(object):
     def __init__(self):
         self.root = Tk()
         self.root.title("Config")
+        self.root.iconbitmap('config.ico')
         self.root.geometry('285x300+1050+200')
         self.butSetDefault = Button(self.root, bg='#c2c1c3', width=15, height=2, text='Set Default',
                                     command=self.butSetDefaultLogic)
