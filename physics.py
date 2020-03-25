@@ -8,7 +8,7 @@ import math, random
 
 
 class PhysicsController(object):
-    def __init__(self,config,ballsList):
+    def __init__(self, config, ballsList):
         self.config = config
         self.threadList = []
         self.lock = Lock()
@@ -26,7 +26,8 @@ class PhysicsController(object):
         self.createThreads()
 
     def createThreads(self):
-        self.threadList = [Thread(target=self.calculatePhysics, args=(i,)) for i in range(self.config.app.NUMBER_THREADS)]
+        self.threadList = [Thread(target=self.calculatePhysics, args=(i,)) for i in
+                           range(self.config.app.NUMBER_THREADS)]
 
     def startThreads(self):
         self.flRun = True

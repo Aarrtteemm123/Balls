@@ -1,6 +1,5 @@
-import pickle
-import time
-import pygame
+import os, pickle, time, pygame
+from threading import Thread
 from GUI import Interface
 from ball import Ball
 from physics import PhysicsController
@@ -17,6 +16,17 @@ class Application(object):
         self.frameTime = 0
         self.timeCounter = 0
         self.counterInfoUpdate = 20
+        self.threadInterfaceConfig = Thread(target=self.runInterfaceConfig)
+        self.threadInterfaceConfig.start()
+
+    def runInterfaceConfig(self):
+        self.config.app.CLOSE_PROGRAM = False
+        self.saveConfig(self.config)
+        os.system(r"InterfaceConfig.exe")
+
+    def saveConfig(self, config):
+        with open('Config', 'wb') as f:
+            pickle.dump(config, f)
 
     def loadConfig(self):
         with open('Config', 'rb') as f:
@@ -81,12 +91,14 @@ class Application(object):
         for e in pygame.event.get():
             if e.type == pygame.QUIT:
                 self.run = False
+                self.config.app.CLOSE_PROGRAM = True
+                self.saveConfig(self.config)
             elif e.type == pygame.KEYDOWN:
                 if e.key == pygame.K_SPACE:
                     self.stop = not self.stop
                 elif e.key == pygame.K_r:
                     self.config = self.loadConfig()
-                    self.pc = PhysicsController(self.config,self.createBalls(self.config.physics.NUMBER_BALLS))
+                    self.pc = PhysicsController(self.config, self.createBalls(self.config.physics.NUMBER_BALLS))
                 elif e.key == pygame.K_z:
                     self.config.physics.COLLISION = not self.config.physics.COLLISION
                 elif e.key == pygame.K_x:

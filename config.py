@@ -1,5 +1,4 @@
 import os
-import pickle
 
 
 class Config(object):
@@ -35,3 +34,4 @@ class Config(object):
     class App(object):
         def __init__(self):
             self.NUMBER_THREADS = os.cpu_count() * 2
+            self.CLOSE_PROGRAM = False

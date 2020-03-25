@@ -1,11 +1,9 @@
 import pygame
-
-from config import Config
 from physics import Gyroscope
 
 
 class Interface(object):
-    def __init__(self,config):
+    def __init__(self, config):
         self.config = config
         self.window = pygame.display.set_mode((self.config.win.WIN_WIDTH, self.config.win.WIN_HEIGHT))
         pygame.display.set_caption(self.config.win.WIN_TITLE)
@@ -18,7 +16,8 @@ class Interface(object):
         self.txtFrameTime = self.font.render('Frame time: 0', True, self.DEFAULT_TEXT_COLOR)
         self.txtNumThreads = self.font.render('Threads: ' + str(self.config.app.NUMBER_THREADS), True,
                                               self.DEFAULT_TEXT_COLOR)
-        self.txtNumBalls = self.font.render('Balls: ' + str(self.config.physics.NUMBER_BALLS), True, self.DEFAULT_TEXT_COLOR)
+        self.txtNumBalls = self.font.render('Balls: ' + str(self.config.physics.NUMBER_BALLS), True,
+                                            self.DEFAULT_TEXT_COLOR)
         self.txtNumCollision = self.font.render('Collision/sec: 0', True,
                                                 self.DEFAULT_TEXT_COLOR)
         self.txtAvgSpeed = self.font.render('Avg speed: 0', True,

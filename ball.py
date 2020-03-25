@@ -1,12 +1,9 @@
-import random
-
-import pygame, math
+import random, pygame, math
 from pygame import gfxdraw
-from config import Config
 
 
 class Ball(object):
-    def __init__(self,config):
+    def __init__(self, config):
         self.config = config
         self.radius = 10
         self.x = 0
